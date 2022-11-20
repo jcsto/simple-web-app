@@ -7,16 +7,18 @@ Simple web app built in Laravel 7. Create and edit companies. Create, edit, dele
 # install dependencies
 composer install
 
+# setup the .env file and set your database values.
 # run migrations
 php artisan migrate
- 
-# install front-end dependencies 
-npm install
+
+# generate your key if not generated 
+php artisan key:generate
+
+#run then app
+php artisan serve
 ```
 
 ## Running the app
 
-You are ready to go! You can see the app in your local environment by executing XAMPP, WAMPP or whatever you use to deploy your local PHP applications. You could also use the laravel artisan command to deploy a virtual server:
-```bash
-php artisan serve
-```
+You are all set! You can access the application in the url:
+http://127.0.0.1:8000/
