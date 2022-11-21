@@ -16,6 +16,9 @@ php artisan key:generate
 
 #run then app
 php artisan serve
+
+#run tests
+php artisan test
 ```
 
 ## Running the app
