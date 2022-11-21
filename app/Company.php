@@ -37,6 +37,9 @@ class Company extends Model
     public function updateCompany($id, array $data)
     {
         $company = Company::find($id);
+        if (!$company) {
+            return false;
+        }
 
         return $company->update($data);
     }

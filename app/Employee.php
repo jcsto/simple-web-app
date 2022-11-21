@@ -23,7 +23,7 @@ class Employee extends Model
     }
 
     /**
-     * Store an inventory image
+     * Create an employee
      */
     public function store(array $data)
     {
@@ -35,9 +35,11 @@ class Employee extends Model
      */
     public function updateEmployee($id, array $data)
     {
-        $company = Employee::find($id);
-
-        return $company->update($data);
+        $employee = Employee::find($id);
+        if (!$employee) {
+            return false;
+        }
+        return $employee->update($data);
     }
 
     /**
