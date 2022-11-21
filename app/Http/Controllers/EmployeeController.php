@@ -40,7 +40,6 @@ class EmployeeController extends Controller
     public function store(Request $request, $id)
     {
         $input = $request->all();
-
         $validator = Validator::make($request->all(), [
             'full_name' => 'required|max:200',
             'email' => 'required|email|unique:employees|max:200',
@@ -62,7 +61,10 @@ class EmployeeController extends Controller
                 ->withInput();
         }
 
-        Employee::create($input);
+        $res = (new Employee())->store($input);
+        if (!$res) {
+            return redirect()->route('company.list')->with('error', 'Error saving company');
+        }
         return redirect()->route('company.employees', ['id' => $id])->with('success', 'Employee created successfully');
     }
 
@@ -84,13 +86,14 @@ class EmployeeController extends Controller
 
     /**
      * Update the specified employee in storage.
-     * @param  int  $id
+     * @param Request $request
+     * @param int $id
+     * @param int $id_employee
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id, $id_employee)
+    public function update(Request $request, int $id, int $id_employee)
     {
         $input = $request->all();
-
         $validator = Validator::make($request->all(), [
             'full_name' => 'required|max:200',
             'email' => 'required|email|max:200',
@@ -113,19 +116,37 @@ class EmployeeController extends Controller
         }
 
         $company = Company::find($id);
-        (new Employee())->updateEmployee($id_employee, $input);
-        return redirect()->route('company.employees', ['id' => $company->id])->with('success', 'Employee updated successfully');
+        if (!$company) {
+            return redirect()->route('company.employees', ['id' => $id])->with('error', 'Company was not found');
+        }
+
+        $res = (new Employee())->updateEmployee($id_employee, $input);
+        if (!$res) {
+            return redirect()->route('company.employees', ['id' => $id])->with('error', 'Employee was not found');
+        }
+
+        return redirect()->route('company.employees', ['id' => $id])->with('success', 'Employee updated successfully');
     }
 
     /**
      * Remove the specified employee from storage.
-     * @param  int  $id
+     * @param Request $request
+     * @param int $id
+     * @param int $id_employee
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id, $id_employee)
+    public function destroy(Request $request, int $id, int $id_employee)
     {
-        $employee = Employee::find($id_employee);
-        (new Employee())->deleteCompany($employee);
+        $employee = Employee::where('id', $id_employee)->first();
+        if (!$employee) {
+            return redirect()->route('company.employees', ['id' => $id])->with('error', 'Employee was not found');
+        }
+
+        $res = (new Employee())->deleteEmployee($employee);
+        if (!$res) {
+            return redirect()->route('company.employees', ['id' => $id])->with('error', 'Employee was not deleted');
+        }
+
         return redirect()->route('company.employees', ['id' => $id])->with('success', 'Employee deleted successfully');
     }
 }

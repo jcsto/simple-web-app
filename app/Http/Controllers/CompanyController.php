@@ -37,7 +37,6 @@ class CompanyController extends Controller
     public function store(Request $request)
     {
         $input = $request->all();
-
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:200',
             'email' => 'required|email|unique:companies|max:200',
@@ -55,7 +54,11 @@ class CompanyController extends Controller
                 ->withInput();
         }
 
-        (new Company())->store($input);
+        $res = (new Company())->store($input);
+        if (!$res) {
+            return redirect()->route('company.list')->with('error', 'Error saving company');
+        }
+
         return redirect()->route('company.list')->with('success', 'Company created successfully');
     }
 
@@ -92,13 +95,13 @@ class CompanyController extends Controller
 
     /**
      * Update the specified company in storage.
-     * @param  int  $id
+     * @param Request $request
+     * @param int $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $input = $request->all();
-
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:200',
             'email' => 'required|email|max:200',
@@ -116,7 +119,11 @@ class CompanyController extends Controller
                 ->withInput();
         }
 
-        (new Company())->updateCompany($id, $input);
+        $res = (new Company())->updateCompany($id, $input);
+        if (!$res) {
+            return redirect()->route('company.list')->with('error', 'Company was not found');
+        }
+
         return redirect()->route('company.list')->with('success', 'Company updated successfully');
     }
 
