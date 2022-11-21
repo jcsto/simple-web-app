@@ -36,6 +36,7 @@ Route::group(['as' => 'company.'], function() {
 
 // full list of employees
 Route::get('/employees', 'EmployeeController@index')->name('employee.list');
+
 Route::get('/404-not-found', 'NotFoundController@view')->name('404.not.found');
 
 Route::fallback(function() {
